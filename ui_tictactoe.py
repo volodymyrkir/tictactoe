@@ -1,5 +1,5 @@
 """This module contains pygame UI for tictactoe"""
-# pylint: disable=too-few-public-methods, logging-fstring-interpolation, R1702, R0912, R0915, E1101, C0103, R0914
+# pylint: disable=too-few-public-methods, logging-fstring-interpolation, R1702, R0912, R0915, E1101, C0103, R0914, import-error
 import sys
 from random import choice
 from datetime import datetime

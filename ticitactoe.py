@@ -1,5 +1,5 @@
 """This module includes some logic to be extended for tictactoe game"""
-# pylint: disable=too-few-public-methods, logging-fstring-interpolation
+# pylint: disable=too-few-public-methods, logging-fstring-interpolation, import-error
 import math
 from abc import ABC, abstractmethod
 from random import choice
