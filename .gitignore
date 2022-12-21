@@ -1,0 +1,9 @@
+.gitignore
+x.jpg
+o.jpg
+ticitactoe.zip
+node.jpg
+background.jpg
+__pycache__/
+.idea/
+wins.log
