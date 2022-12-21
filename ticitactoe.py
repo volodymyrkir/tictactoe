@@ -1,4 +1,5 @@
 """This module includes some logic to be extended for tictactoe game"""
+# pylint: disable=too-few-public-methods, logging-fstring-interpolation
 import math
 from abc import ABC, abstractmethod
 from random import choice
@@ -9,6 +10,7 @@ logger = get_logger()
 
 class Player:
     """Class that implements Player entity with it's main logic """
+
     def __init__(self, name):
         self.name = name
         self.streak = 0
@@ -138,7 +140,8 @@ Enter numbers from 1 to 9 according to this scheme:
                     for line in file.readlines():
                         print(line)
             elif menu_choice == 3:
-                open("wins.log", "w", encoding="utf-8").close()
+                with open("wins.log", "w", encoding="utf-8"):
+                    pass
                 logger.warning("Log file cleared")
             else:
                 break
@@ -147,6 +150,7 @@ Enter numbers from 1 to 9 according to this scheme:
 class Field:  # Логика проверки поля
     """Class that implements playground for tictactoe"""
     last_play = 0
+
     def __init__(self, size):
         self.field = [" " for i in range(size)]
         self.size = size
@@ -154,8 +158,9 @@ class Field:  # Логика проверки поля
     def check_all(self, symbol, size):
         """Checks whether there is a win combination"""
         field_size = int(math.sqrt(size))
-        return self.check_diagonal(symbol, field_size) or self.check_column(symbol, field_size) or self.check_row(
-            symbol, field_size)
+        return (self.check_diagonal(symbol, field_size)
+                or self.check_column(symbol, field_size)
+                or self.check_row(symbol, field_size))
 
     def check_column(self, symbol: str, field_size: int):
         """Checks whether there is a win combination on any column"""
@@ -176,19 +181,23 @@ class Field:  # Логика проверки поля
     def check_diagonal(self, symbol: str, field_size):
         """Checks whether there is a win combination on any diagonal"""
         first_diag_slice = self.field[0:int(field_size ** 2):field_size + 1]
-        second_diag_slice = self.field[field_size - 1:int(field_size ** 2) - field_size + 1:field_size - 1]
+        second_diag_slice = self.field[field_size - 1:int(field_size ** 2)
+                                                      - field_size + 1:field_size - 1]
         first_cond = len(set(first_diag_slice)) == 1 and first_diag_slice[0] == symbol
         second_cond = len(set(second_diag_slice)) == 1 and second_diag_slice[0] == symbol
         return first_cond or second_cond
 
     def get_possible_moves(self):
+        """Returns list of possible moves"""
         return [position for position in self.field if position == " "]
 
-    def make_move(self,position,turn_char):
-        self.field[position]=turn_char
+    def make_move(self, position, turn_char):
+        """Makes a move"""
+        self.field[position] = turn_char
         self.last_play = position
 
     def undo(self):
+        """Returns state of game to prev. move"""
         self.field[self.last_play] = " "
 
     def draw_check(self):
@@ -228,7 +237,8 @@ class GameLoop:
                 if self.field.check_all("X", self.field.size):  # Если Х победил
                     self.view.show_board()
                     if self.oplayer.streak >= 1 or self.xplayer.streak >= 1:  # Если идёт партия
-                        logger.info(f"Score is now {self.xplayer.streak + 1} --- {self.oplayer.streak}")
+                        logger.info(f"Score is now {self.xplayer.streak + 1}"
+                                    f" --- {self.oplayer.streak}")
                     logger.info(f"{self.xplayer.name} (X) Wins!!!")
                     game = False
                     self.xplayer.streak += 1
@@ -239,12 +249,14 @@ class GameLoop:
                 if self.field.check_all("O", self.field.size):
                     self.view.show_board()
                     if self.oplayer.streak >= 1 or self.xplayer.streak >= 1:  # Если идёт партия
-                        logger.info(f"Score is now {self.xplayer.streak} --- {self.oplayer.streak + 1}")
+                        logger.info(f"Score is now {self.xplayer.streak}"
+                                    f" --- {self.oplayer.streak + 1}")
                     logger.info(f"{self.oplayer.name} (O) Wins!!!")
                     game = False
                     self.oplayer.streak += 1
             if self.field.draw_check():  # Если ничья
-                logger.info(f"Friendship between {self.xplayer.name} and {self.oplayer.name} wins!")
+                logger.info(f"Friendship between {self.xplayer.name}"
+                            f" and {self.oplayer.name} wins!")
                 game = False
             self.x_move = not self.x_move
         game_choice = self.view.get_game_choice()
