@@ -202,7 +202,7 @@ class Field:  # Логика проверки поля
 
     def draw_check(self):
         """Checks whether there is a draw combination on field"""
-        return not self.field.__contains__(" ")
+        return " " not in self.field
 
     def refresh_game(self):
         """Sets field gaps to default values"""
