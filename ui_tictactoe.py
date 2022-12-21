@@ -1,11 +1,15 @@
+"""This module contains pygame UI for tictactoe"""
+# pylint: disable=too-few-public-methods, logging-fstring-interpolation, R1702, R0912, R0915, E1101, C0103, R0914, import-error
 import sys
-import pygame
 from random import choice
 from datetime import datetime
+
+import pygame
+
 from ticitactoe import View
 from log import get_logger
 
-logger= get_logger()
+logger = get_logger()
 pygame.init()
 screen = pygame.display.set_mode((900, 700))
 pygame.display.set_caption("TIC TAC TOE")
@@ -13,7 +17,11 @@ rect_color = (255, 0, 0)
 
 
 class PygameView(View):
+    """Class that represents pygame view"""
+
     class Node:
+        """Subclass representing node on board"""
+
         def __init__(self, x, y, width, height):
             self.rect = pygame.Rect(x, y, width, height)
             self.x = x
@@ -22,29 +30,39 @@ class PygameView(View):
     background = pygame.image.load('background.jpg').convert()
 
     locations = [(250, 120, 100, 100), (250 + 150, 120, 100, 100), (250 + 300, 120, 100, 100),
-                 (250, 120 + 145, 100, 100), (250 + 150, 120 + 145, 100, 100), (250 + 300, 145 + 120, 100, 100),
-                 (250, 120 + 290, 100, 100), (250 + 150, 120 + 290, 100, 100), (250 + 300, 290 + 120, 100, 100)]
+                 (250, 120 + 145, 100, 100),
+                 (250 + 150, 120 + 145, 100, 100),
+                 (250 + 300, 145 + 120, 100, 100),
+                 (250, 120 + 290, 100, 100),
+                 (250 + 150, 120 + 290, 100, 100),
+                 (250 + 300, 290 + 120, 100, 100)]
     nodes = []
     moves = []
     turn = choice(["x", "o"])
-    turn_stuff = {"x": pygame.image.load('x.jpg'), "o": pygame.image.load('o.jpg')}
+    turn_stuff = {"x": pygame.image.load('x.jpg'),
+                  "o": pygame.image.load('o.jpg')}
 
     def init_loop(self):
+        """Loops over menu"""
         screen.blit(self.background, (0, 0))
         font = pygame.font.SysFont('ghotic', 60)
-        welcome_label = font.render('WELCOME TO THE TIC TAC TOE GAME!', True, pygame.Color(220, 20, 60))
+        welcome_label = font.render('WELCOME TO THE TIC TAC TOE GAME!',
+                                    True, pygame.Color(220, 20, 60))
         welcome_rect = welcome_label.get_rect()
         welcome_rect.center = (900 // 2, 100)
 
-        new_game_label = font.render('New game', True, pygame.Color(220, 20, 60))
+        new_game_label = font.render('New game', True,
+                                     pygame.Color(220, 20, 60))
         new_game_rect = new_game_label.get_rect()
         new_game_rect.center = (900 // 2, 250)
 
-        show_log_label = font.render('Show win log file', True, pygame.Color(220, 20, 60))
+        show_log_label = font.render('Show win log file',
+                                     True, pygame.Color(220, 20, 60))
         show_log_rect = show_log_label.get_rect()
         show_log_rect.center = (900 // 2, 350)
 
-        clear_log_label = font.render('Clear win log file', True, pygame.Color(220, 20, 60))
+        clear_log_label = font.render('Clear win log file',
+                                      True, pygame.Color(220, 20, 60))
         clear_log_rect = clear_log_label.get_rect()
         clear_log_rect.center = (900 // 2, 450)
 
@@ -67,22 +85,25 @@ class PygameView(View):
                         logs = ""
                         with open("wins.log", "r", encoding="utf-8") as file:
                             for line in file:
-                                logs += line #TODO
+                                logs += line
                         print(logs)
                     elif clear_log_rect.collidepoint(pygame.mouse.get_pos()):
-                        open("wins.log", "w", encoding="utf-8").close()
+                        with open("wins.log", "w", encoding="utf-8"):
+                            pass
                         logger.warning("Log file cleared")
                     elif exit_rect.collidepoint(pygame.mouse.get_pos()):
                         sys.exit()
             pygame.display.update()
 
     def rect_collided(self, point):
+        """Returns rectangles collided"""
         for node in self.nodes:
             if node.rect.collidepoint(point):
                 return self.nodes.index(node), node.x, node.y
         return None, None, None
 
     def show_board(self):
+        """Prints board"""
         font = pygame.font.SysFont('ghotic', 50)
         for position in self.locations:
             n = self.Node(*position)
@@ -102,33 +123,17 @@ class PygameView(View):
                 if event.type == pygame.QUIT:
                     sys.exit()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
-                    node_index, collided_x, collided_y = self.rect_collided(pygame.mouse.get_pos())
+                    node_index, collided_x, collided_y = self.rect_collided(pygame.
+                                                                            mouse.get_pos())
                     if node_index is not None and self.field.field[node_index] == " ":
                         self.field.field[node_index] = self.turn
-                        self.moves.append((self.turn_stuff[self.turn], collided_x, collided_y))
+                        self.moves.append((self.turn_stuff[self.turn],
+                                           collided_x, collided_y))
                         if self.field.check_all(self.turn, 9):
                             logger.info(f"{self.turn} Wins!!! {datetime.now()}")
-                            exit_label = font.render(f"{self.turn} won, click this message to go to main menu!",
-                                                     True, pygame.Color(220, 20, 60))
-                            exit_rect = exit_label.get_rect()
-                            exit_rect.center = (500, 600)
-                            screen.blit(exit_label, exit_rect)
-                            while True:
-                                pygame.display.update()
-                                for move in self.moves:
-                                    picture = pygame.transform.scale(move[0], (100, 100))
-                                    screen.blit(picture, (move[1], move[2]))
-                                for ev in pygame.event.get():
-                                    if ev.type == pygame.MOUSEBUTTONDOWN:
-                                        if exit_rect.collidepoint(pygame.mouse.get_pos()):
-                                            self.field.field=[" " for _ in range(9)]
-                                            self.change_turn()
-                                            self.moves=[]
-                                            self.nodes=[]
-                                            self.init_loop()
-                        elif self.field.draw_check():
-                            logger.info(f"Draw.{datetime.now()}")
-                            exit_label = font.render(f"Draw! Click this message to go to main menu!",
+                            exit_label = font.render(f"{self.turn} won,"
+                                                     f" click this message"
+                                                     f" to go to main menu!",
                                                      True, pygame.Color(220, 20, 60))
                             exit_rect = exit_label.get_rect()
                             exit_rect.center = (500, 600)
@@ -146,21 +151,44 @@ class PygameView(View):
                                             self.moves = []
                                             self.nodes = []
                                             self.init_loop()
+                        elif self.field.draw_check():
+                            logger.info(f"Draw.{datetime.now()}")
+                            exit_label = font.render("Draw!"
+                                                     " Click this message to go to main menu!",
+                                                     True, pygame.Color(220, 20, 60))
+                            exit_rect = exit_label.get_rect()
+                            exit_rect.center = (500, 600)
+                            screen.blit(exit_label, exit_rect)
+                            while True:
+                                pygame.display.update()
+                                for move in self.moves:
+                                    picture = pygame.transform.scale(move[0], (100, 100))
+                                    screen.blit(picture, (move[1], move[2]))
+                                for event_in in pygame.event.get():
+                                    if event_in.type == pygame.MOUSEBUTTONDOWN:
+                                        if exit_rect.collidepoint(pygame.mouse.get_pos()):
+                                            self.field.field = [" " for _ in range(9)]
+                                            self.change_turn()
+                                            self.moves = []
+                                            self.nodes = []
+                                            self.init_loop()
                         self.change_turn()
-                        turn_label = font.render(f"{self.turn}`s turn now!", True, pygame.Color(220, 20, 60))
+                        turn_label = font.render(f"{self.turn}`s turn now!",
+                                                 True, pygame.Color(220, 20, 60))
             pygame.display.update()
 
     def change_turn(self):
+        """Changes turn"""
         if self.turn == "x":
             self.turn = "o"
         else:
             self.turn = "x"
 
     def print_instructions(self, name1, name2):
-        pass
+        """Prints game instructions"""
 
     def get_game_choice(self):
-        pass
+        """Gets game choice"""
 
     def get_menu_choice(self):
-        pass
+        """Gets menu choice"""
