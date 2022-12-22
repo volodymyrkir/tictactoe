@@ -75,3 +75,9 @@ def test_make_move(field_object: Field) -> None:
     """Tests check make_move function"""
     field_object.make_move(2, 'X')
     assert field_object.last_play == 2
+
+
+def test_make_move_y(field_object: Field) -> None:
+    """Tests check make_move function"""
+    field_object.make_move(2, 'y')
+    assert field_object.field[2] == 'y'
