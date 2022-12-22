@@ -1,6 +1,6 @@
 """This module tests MVC structure of tictactoe module"""
 from pytest import fixture
-from ticitactoe import Field
+from tictactoe import Field
 
 
 @fixture
