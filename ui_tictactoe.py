@@ -6,7 +6,7 @@ from datetime import datetime
 
 import pygame
 
-from tictactoe import View
+from tictactoe_mvc import View
 from log import get_logger
 
 logger = get_logger()
