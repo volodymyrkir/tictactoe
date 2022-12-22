@@ -34,5 +34,5 @@ jobs:
         python -m pytest
     - name: Lint with pylint
       run: |
-        pylint *.py
+        pylint **/*.py
       
