@@ -1,4 +1,4 @@
-# pylint: disable=redefined-outer-name
+# pylint: disable=redefined-outer-name, import-error
 """This module tests MVC structure of tictactoe module"""
 from pytest import fixture
 from tictactoe_mvc import Field
