@@ -1,6 +1,6 @@
 """This module is a main module for tictactoe package"""
 # pylint: disable=import-error
-from ticitactoe import Field
+from tictactoe import Field
 from ui_tictactoe import PygameView
 
 
